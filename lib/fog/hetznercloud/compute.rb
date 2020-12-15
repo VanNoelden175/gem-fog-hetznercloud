@@ -22,6 +22,7 @@ module Fog
       requires   :hetznercloud_token
       recognizes :hetznercloud_datacenter
       recognizes :hetznercloud_location
+      recognizes :hetznercloud_network
       secrets    :hetznercloud_token
 
       model_path 'fog/hetznercloud/models/compute'
@@ -38,6 +39,8 @@ module Fog
       collection :floating_ips
       model      :location
       collection :locations
+      model      :network
+      collection :networks
       model      :datacenter
       collection :datacenters
       model      :ssh_key
@@ -70,6 +73,10 @@ module Fog
       # Locations
       request :list_locations
       request :get_location
+
+      # Networks
+      request :list_networks
+      request :get_network
 
       # Datacenters
       request :list_datacenters

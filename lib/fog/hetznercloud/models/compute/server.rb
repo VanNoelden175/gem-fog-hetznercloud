@@ -18,6 +18,7 @@ module Fog
         attribute :public_net
         attribute :datacenter
         attribute :location
+        attribute :networks
         attribute :iso
         attribute :rescue_enabled
         attribute :locked
@@ -89,6 +90,24 @@ module Fog
                                   else
                                     value
                                    end
+        end
+
+        def networks=(value)
+          attributes[:networks] = []
+          return true if value.nil?
+          value.each do |item|
+            thing = case item
+                    when Hash
+                      service.networks.new(item)
+                    when String
+                      service.networks.all(name: item).first
+                    when Integer
+                      service.networks.get(item)
+                    else
+                      value
+                    end  
+            attributes[:networks] << thing
+          end
         end
 
         def datacenter=(value)
@@ -362,6 +381,7 @@ module Fog
           options[:start_after_create] = start_after_create unless start_after_create.nil?
           options[:labels] = labels unless labels.nil?
           options[:location] = location.identity unless location.nil?
+          options[:networks] = networks.map(&:identity) unless networks.nil?
           options[:datacenter] = datacenter.identity unless datacenter.nil?
 
           if (server = service.create_server(name, image.identity, server_type.identity, options).body['server'])
